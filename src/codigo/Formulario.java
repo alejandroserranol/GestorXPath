@@ -44,6 +44,8 @@ public class Formulario extends javax.swing.JFrame {
         jTextAreaSalida = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setIconImage(new javax.swing.ImageIcon(getClass().getResource("/imagenes/carpeta.png")).getImage()
+        );
 
         jButtonAbrir.setText("Archivo XML");
         jButtonAbrir.addActionListener(new java.awt.event.ActionListener() {
@@ -103,13 +105,13 @@ public class Formulario extends javax.swing.JFrame {
                 .addComponent(jLabelConsulta, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
-                        .addGap(18, 18, 18))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
                         .addComponent(jButtonEjecutar, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(63, 63, 63)))
+                        .addGap(63, 63, 63))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -183,6 +185,10 @@ public class Formulario extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextAreaSalida;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * @see Abre el fichero seleccionado.
+     * @return Fichero seleccionado.
+     */
     private File dialogoSeleccionarFichero() {
 
         File fichero = null;
@@ -218,6 +224,10 @@ public class Formulario extends javax.swing.JFrame {
         return null;
     }
 
+    /**
+     * @see Permite seleccionar la ruta donde guardar el fichero y
+     *      pasa el fichero como parámetro a los métodos de guardado.
+     */
     private File dialogoGuardarFichero() {
 
         File fichero = null;

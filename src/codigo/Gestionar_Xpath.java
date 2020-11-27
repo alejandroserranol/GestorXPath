@@ -13,7 +13,8 @@ import org.w3c.dom.*;
 
 /**
  *
- * @author aleja
+ * @author Alejandro Serrano Loredo
+ * @version 1
  */
 public class Gestionar_Xpath {
 
@@ -22,6 +23,12 @@ public class Gestionar_Xpath {
 
     XPath xpath;
 
+    /**
+     * @see Crea al árbol DOM y prepara el fichero pasado como parámetro
+     *      para ejecutar el XPath.
+     * @param _fichero: Fichero a partir del cual se elaborará el DOM.
+     * @return Entero para manejar la excepción.
+     */
     public int abrir_XML(File _fichero) {
 
         //doc representará el árbol DOM.
@@ -48,11 +55,18 @@ public class Gestionar_Xpath {
             return -1;
         }
     }
-
+    
+    /**
+     * @see Realiza la consulta con el XPath y devuelve el resultado en forma de String.
+     * @param _consulta: Expresión a ejecutar el contenido de jTextAreaConsulta.
+     * @return String a mostrar en el jTextAreaSalida.
+     */
     public String Ejecutar_XPath(String _consulta) {
         String salida = "";
-        Node node;
+        NodeList listaLibros = null;
+        Node nodoLibro;
         String datos_nodo[] = null;
+        int posicion = 1;
 
         try {
 
@@ -60,29 +74,63 @@ public class Gestionar_Xpath {
 
             Object resultado = exp.evaluate(doc, XPathConstants.NODESET);
             NodeList listaNodos = (NodeList) resultado;
-
+            //Guarda la consulta en un nodo para comprobar de qué tipo es
             Node nodoRecibido = (Node) exp.evaluate(doc, XPathConstants.NODE);
-            //System.out.println("Tipo de nodo: " + nodoRecibido.getNodeName());
 
-            if (nodoRecibido.getNodeName() == "Libro") {
-                for (int i = 0; i < listaNodos.getLength(); i++) {
-                    node = listaNodos.item(i);
-                    if (node.getNodeType() == Node.ELEMENT_NODE) {
-                        datos_nodo = procesarLibro(node);
-                        salida += "\r\n " + "Publicado en: " + datos_nodo[0];
-                        salida += "\r\n " + "El título es: " + datos_nodo[1];
-                        salida += "\r\n " + "El autor es: " + datos_nodo[2];
-                        salida += "\r\n " + "La editorial es: " + datos_nodo[3];
-                        salida += "\r\n -------------------------";
+            if (nodoRecibido.getNodeName().equals("Libros")) {
+
+                listaLibros = nodoRecibido.getChildNodes();
+
+                salida += "Se van a mostrar los siguientes libros\n************************************************\n";
+                for (int i = 0; i < listaLibros.getLength(); i++) {
+                    nodoLibro = listaLibros.item(i);
+                    if (nodoLibro.getNodeType() == Node.ELEMENT_NODE) {
+                        datos_nodo = procesarLibro(nodoLibro);
+                        salida += "Libro " + posicion + "\r\n-------------------------";
+                        salida += "\r\nEl título es:\t" + datos_nodo[1];
+                        salida += "\r\nEl autor es:\t" + datos_nodo[2];
+                        salida += "\r\nLa editorial es:\t" + datos_nodo[3];
+                        salida += "\r\nPublicado en:\t" + datos_nodo[0];
+                        salida += "\r\n-------------------------\r\n";
+                        posicion++;
                     }
                 }
-            } else if (nodoRecibido.getNodeName() == "Autor" || nodoRecibido.getNodeName() == "Titulo" || nodoRecibido.getNodeName() == "Editorial") {
+            } else if (nodoRecibido.getNodeName().equals("Libro")) {
+                salida += "Se van a mostrar los  siguientes libros\n************************************************\n";
                 for (int j = 0; j < listaNodos.getLength(); j++) {
-                    salida += "\n" + listaNodos.item(j).getFirstChild().getNodeValue();
+                    nodoLibro = listaNodos.item(j);
+                    if (nodoLibro.getNodeType() == Node.ELEMENT_NODE) {
+                        datos_nodo = procesarLibro(nodoLibro);
+                        salida += "Libro " + posicion + "\r\n-------------------------";
+                        salida += "\r\nEl título es:\t" + datos_nodo[1];
+                        salida += "\r\nEl autor es:\t" + datos_nodo[2];
+                        salida += "\r\nLa editorial es:\t" + datos_nodo[3];
+                        salida += "\r\nPublicado en:\t" + datos_nodo[0];
+                        salida += "\r\n-------------------------\r\n";
+                        posicion++;
+                    }
+                }
+            } else if (nodoRecibido.getNodeName().equals("Autor")) {
+                for (int k = 0; k < listaNodos.getLength(); k++) {
+                    salida += "\n\nAutor " + posicion + ":\t" + listaNodos.item(k).getFirstChild().getNodeValue();
+                    posicion++;
+                }
+            } else if (nodoRecibido.getNodeName().equals("Titulo")) {
+                for (int m = 0; m < listaNodos.getLength(); m++) {
+                    salida += "\n\nTitulo " + posicion + ":\t" + listaNodos.item(m).getFirstChild().getNodeValue();
+                    posicion++;
+                }
+            } else if (nodoRecibido.getNodeName().equals("Editorial")) {
+                for (int n = 0; n < listaNodos.getLength(); n++) {
+                    salida += "\n\nEditorial " + posicion + ":\t" + listaNodos.item(n).getFirstChild().getNodeValue();
+                    posicion++;
                 }
             } else {
-                for (int k = 0; k < listaNodos.getLength(); k++) {
-                    salida += "\n" + listaNodos.item(k).getNodeValue();
+                for (int p = 0; p < listaNodos.getLength(); p++) {
+                    salida += "\r\nLibro " + posicion + "\r\n -------------------------\r\n";
+                    salida += "Publicado en:\t" + listaNodos.item(p).getNodeValue();
+                    salida += "\r\n-------------------------";
+                    posicion++;
                 }
             }
             return salida;
@@ -90,16 +138,21 @@ public class Gestionar_Xpath {
             return "Error en la ejecución de la salida";
         }
     }
-
-    private String[] procesarLibro(Node _n) {
+    
+    /**
+     * @see Recorre un libro pasado como parámetro y devuelve su información.
+     * @param _nodoLibro: Nodo a recorrer, del que mostrar información.
+     * @return Array de Strings con información relativa al libro.
+     */
+    private String[] procesarLibro(Node _nodoLibro) {
         String datos[] = new String[4];
         Node hijosDeLibro = null;
         int contador = 1;
 
         //Obtiene el valor del primer atributo del nodo
-        datos[0] = _n.getAttributes().item(0).getNodeValue();
+        datos[0] = _nodoLibro.getAttributes().item(0).getNodeValue();
 
-        NodeList nodos = _n.getChildNodes();
+        NodeList nodos = _nodoLibro.getChildNodes();
 
         for (int i = 0; i < nodos.getLength(); i++) {
             hijosDeLibro = nodos.item(i);
